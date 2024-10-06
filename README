@@ -12,3 +12,34 @@ Mikrotik Backup
 ---
 
 В качестве базы данных для хранения конфигурации используется SQLite3. Для постоянного хранения необходимо смонтировать в контейнер mik-back каталог по пути /db
+
+---
+
+На данный момент поддерживаются GIT репозитории с авторизацией по логину/паролю
+
+---
+
+Пример docker-compose для запуска:
+
+services:
+  back:
+    image: "ghcr.io/snigerev/mikrotik-backup-server:latest"
+    container_name: "mik-back"
+    environment:
+      TZ: 'Europe/Moscow'
+    volumes: 
+      - {path/to/local/storage}:/db
+    mem_limit: "128m"
+    restart: always
+
+  front:
+    image: "ghcr.io/snigerev/mikrotik-backup-front:latest"
+    container_name: "mik-front"
+    mem_limit: "128m"
+    ports:
+      - 8088:80
+    restart: always
+
+
+container_name: "mik-back" на данный момент является обязательным.
+TZ выставляется в соответствии с местоположением
