@@ -7,8 +7,10 @@ on:
   workflow_dispatch:
   # Trigger the action when I create or push a `release/**` branch
   push:
-    branches:
-      - 'release/**'
+    branches: [ "main" ]
+    tags: [ '*.*.*' ]
+  pull_request:
+    branches: [ "main" ]
 
 env:
   DOCKER_IMAGE_NAME_SERVER: mikrotik-backup-server
@@ -21,19 +23,27 @@ jobs:
     name: Build Docker Images
     # Runner to use
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Get the release version
-      # i.e.: release/1.0.0 -> 1.0.0
-      id: strip-branch-name
-      run: |
-        release_version=$(echo "${{ github.ref }}" | sed 's/refs\/heads\/.*\///')
-        echo "Building release version $release_version"
-        echo "RELEASE_VERSION=$release_version" >> $GITHUB_ENV
-        shell: bash
+      
+    - name: Extract Docker metadata
+      id: meta-server
+      uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.DOCKER_IMAGE_NAME_SERVER }}
+
+    - name: Extract Docker metadata
+      id: meta-front
+      uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.DOCKER_IMAGE_NAME_FRONT }}
       
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
@@ -46,8 +56,22 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build the Docker image for Server
-      run: cd server && docker buildx build --push --platform linux/amd64,linux/arm64/v8 -t REGISTRY/$DOCKER_IMAGE_NAME_SERVER:$RELEASE_VERSION
- 
-    - name: Build the Docker image for Front
-      run: cd client && docker buildx build --push --platform linux/amd64,linux/arm64/v8 -t REGISTRY/$DOCKER_IMAGE_NAME_FRONT:$RELEASE_VERSION
+    - name: Build and push Docker image Server
+      id: build-and-push-server
+      uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
+      with:
+        context: ./server
+        push: ${{ github.event_name != 'pull_request' }}
+        tags: ${{ steps.meta-server.outputs.tags }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Build and push Docker image Front
+      id: build-and-push-server
+      uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
+      with:
+        context: ./client
+        push: ${{ github.event_name != 'pull_request' }}
+        tags: ${{ steps.meta-front.outputs.tags }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
