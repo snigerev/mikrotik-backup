@@ -67,7 +67,7 @@ jobs:
         cache-to: type=gha,mode=max
 
     - name: Build and push Docker image Front
-      id: build-and-push-server
+      id: build-and-push-front
       uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
       with:
         context: ./client
