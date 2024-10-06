@@ -1,0 +1,20 @@
+version: "3"
+services:
+  mik-server:
+    build:
+      context: ./server
+    container_name: "mik-server"
+    environment:
+      TZ: "Europe/Moscow"
+    volumes:
+      - "./server:/usr/src/server"
+      - "/usr/src/client/node_modules"
+  mik-client:
+    build:
+      context: ./client
+    ports:
+      - "8080:80"
+    container_name: "mik-client"
+    volumes:
+      - "./client:/usr/src/client"
+      - "/usr/src/client/node_modules"
