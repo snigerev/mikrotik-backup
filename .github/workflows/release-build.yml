@@ -7,10 +7,8 @@ on:
   workflow_dispatch:
   # Trigger the action when I create or push a `release/**` branch
   push:
-    branches: [ "main" ]
+    # branches: [ "main" ]
     tags: [ '*.*.*' ]
-  pull_request:
-    branches: [ "main" ]
 
 env:
   DOCKER_IMAGE_NAME_SERVER: mikrotik-backup-server
