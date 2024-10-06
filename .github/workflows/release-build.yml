@@ -11,8 +11,8 @@ on:
     tags: [ '*.*.*' ]
 
 env:
-  DOCKER_IMAGE_NAME_SERVER: mikrotik-backup-server
-  DOCKER_IMAGE_NAME_FRONT: mikrotik-backup-front
+  DOCKER_IMAGE_NAME_SERVER: ${{ github.repository }}-server
+  DOCKER_IMAGE_NAME_FRONT: ${{ github.repository }}-front
   REGISTRY: ghcr.io
 
 jobs:
@@ -30,6 +30,8 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
       
     - name: Extract Docker metadata
       id: meta-server
