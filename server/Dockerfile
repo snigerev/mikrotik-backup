@@ -1,4 +1,4 @@
-FROM node:12-alpine
+FROM node:16-alpine
 RUN apk add sshpass git openssh sqlite --no-cache --update
 RUN mkdir -p /usr/src/server
 

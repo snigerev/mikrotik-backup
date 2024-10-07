@@ -29,7 +29,6 @@ exports.create = (req, res) => {
     })
 };
 exports.createFromService = (req, res) => {
-    console.log(req.body.password)
     User.create({
         name: req.body.name,
         password: bcrypt.hashSync(req.body.password, 8)

@@ -3,7 +3,6 @@ const app = express()
 const bodyParser = require('body-parser')
 const history = require('connect-history-api-fallback');
 require('moment-duration-format')
-// const {fork} = require('child_process');
 const backup = require('./app/controller/backup.controller.js').makeBackup
 
 app.use(bodyParser.urlencoded({extended: false}));
@@ -33,10 +32,7 @@ require('./app/route/cron.route.js')(app);
 require('./app/route/git.route.js')(app);
 require('./app/route/group.route.js')(app);
 
-// app.use('/', express.static(path.join(__dirname, './dist')))
-// exec('dpkg --configure -a', ((error, stdout, stderr) => {
-// }))
-// Create a Server
+
 const server = app.listen(3030, function () {
 
     const host = server.address().address
