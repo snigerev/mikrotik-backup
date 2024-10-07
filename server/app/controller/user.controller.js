@@ -6,7 +6,6 @@ const jwt = require('jsonwebtoken')
 const env = require("../config/env");
 
 exports.create = (req, res) => {
-    console.log(req.body.password)
     User.create({
         name: req.body.name,
         password: bcrypt.hashSync(req.body.password, 8)
